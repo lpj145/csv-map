@@ -1,5 +1,6 @@
 #### CSV-Map
-This lib have goal to manage some csv files with a filter methods, it is built top of [box/soap](https://github.com/box/spout).
+This lib have goal to manage some csv files with a filter methods, it is built top of [box/soap](https://github.com/box/spout),
+for more detailed examples, see: [Tests Examples](https://github.com/lpj145/csv-map/tree/main/tests).
 
 ##### Requirements
     -   >= PHP7.2
@@ -19,6 +20,8 @@ All methods can be found at ``CsvMap\Interfaces\CsvCollectionInterface``
 
 ``groupBy`` - group arrays of values, the index of array is based on ``$row[headerName]``.
 
+``combine`` - mount array by value of index by row and intersect values from some headers.
+
 ``extract`` - extract only columns of values.
 
 ``isEmpty`` - check if collection is empty.
@@ -37,7 +40,9 @@ $csvCollection = Collection::factory($fileCsvPath);
 
 $csvCollection->getHeaders(): array;
 
-$csvCollection->hasHeader('headerName'): bool; 
+$csvCollection->hasHeader('headerName'): bool;
+ 
+$csvCollection->combine(string $indexKey, ...$headers): array;
     
 $csvCollection->groupBy('id')
 

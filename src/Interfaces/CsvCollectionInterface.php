@@ -7,7 +7,9 @@ interface CsvCollectionInterface
 
     public function hasHeader(string $name): bool;
 
-    public function extract(string $headerName): array;
+    public function combine(string $indexKey, ...$headers): array;
+
+    public function extract(string $headerName, bool $removeDuplicated): array;
 
     public function groupBy(string $headerName): array;
 

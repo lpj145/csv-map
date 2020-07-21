@@ -86,6 +86,21 @@ class CollectionTest extends TestCase
         );
     }
 
+    public function testCombine()
+    {
+        $expectedArray = [
+            '20' => [[
+                'name' => 'John D Am',
+                'price_item' => '32.00'
+            ]]
+        ];
+
+        $result = $this->collection->combine('id', 'price_item', 'name');
+        $firstKeyOfResult = key($result);
+        $firstResultOfCombine = [$firstKeyOfResult => $result[$firstKeyOfResult]];
+        $this->assertEquals($expectedArray, $firstResultOfCombine);
+    }
+
     public function testEach()
     {
         $expectedItems = [];

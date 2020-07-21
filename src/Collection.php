@@ -1,11 +1,9 @@
 <?php
 namespace CsvMap;
 
-use Box\Spout\Common\Entity\Row;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Box\Spout\Reader\CSV\RowIterator;
-use Box\Spout\Reader\CSV\Sheet;
 use Box\Spout\Reader\Exception\ReaderNotOpenedException;
 use CsvMap\Interfaces\CsvCollectionInterface;
 
@@ -50,7 +48,7 @@ final class Collection implements CsvCollectionInterface
     {
         $extracted = array_reduce($this->items, function($items, $item) use($headerName, $removeDuplicated){
             if (!array_key_exists($headerName, $item)) {
-                throw new \InvalidArgumentException("${headerName} not found on items from csv files.");
+                throw new \InvalidArgumentException("{$headerName} not found on items from csv files.");
             }
 
             if ($removeDuplicated) {
@@ -69,12 +67,35 @@ final class Collection implements CsvCollectionInterface
         return $extracted;
     }
 
+    public function combine(string $indexKey, ...$headers): array
+    {
+        if (!empty(array_diff($headers, array_intersect($headers, $this->headers)))) {
+            throw new \InvalidArgumentException(
+                'Please, one or more headers are not present on csv file, these is present headers: '.implode(', ', $this->headers)
+            );
+        }
+
+        if (!in_array($indexKey, $this->headers)) {
+            throw new \InvalidArgumentException("{$indexKey} not exists in headers of csv file.");
+        }
+
+        $arrayIndexedByHeadersParams = array_flip($headers);
+        return array_reduce($this->items, function($items, $item) use($indexKey, $headers, $arrayIndexedByHeadersParams){
+            if (!array_key_exists($item[$indexKey], $items)) {
+                $items[$item[$indexKey]] = [];
+            }
+
+            array_push($items[$item[$indexKey]], array_intersect_key($item, $arrayIndexedByHeadersParams));
+            return $items;
+        }, []);
+    }
+
     public function groupBy(string $headerName): array
     {
         return array_reduce($this->items, function($items, $item) use($headerName){
 
             if (!array_key_exists($headerName, $item)) {
-                throw new \InvalidArgumentException("${headerName} not found on items from csv files.");
+                throw new \InvalidArgumentException("{$headerName} not found on items from csv files.");
             }
 
             if (!array_key_exists($item[$headerName], $items)) {
