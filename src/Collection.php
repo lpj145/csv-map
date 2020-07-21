@@ -46,17 +46,27 @@ final class Collection implements CsvCollectionInterface
         return array_search($name, $this->headers);
     }
 
-    public function extract(string $headerName): array
+    public function extract(string $headerName, bool $removeDuplicated = false): array
     {
-        return array_reduce($this->items, function($items, $item) use($headerName){
+        $extracted = array_reduce($this->items, function($items, $item) use($headerName, $removeDuplicated){
             if (!array_key_exists($headerName, $item)) {
                 throw new \InvalidArgumentException("${headerName} not found on items from csv files.");
             }
 
-            $items[] = $item[$headerName];
+            if ($removeDuplicated) {
+                $items[$item[$headerName]] = $item[$headerName];
+            } else {
+                $items[] = $item[$headerName];
+            }
 
             return $items;
         }, []);
+
+        if ($removeDuplicated) {
+            return array_keys($extracted);
+        }
+
+        return $extracted;
     }
 
     public function groupBy(string $headerName): array
