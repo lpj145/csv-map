@@ -22,7 +22,7 @@ All methods can be found at ``CsvMap\Interfaces\CsvCollectionInterface``
 
 ``combine`` - mount array by value of index by row and intersect values from some headers.
 
-``extract`` - extract only columns of values.
+``extract`` - extract only columns of values, with or without duplicated values.
 
 ``isEmpty`` - check if collection is empty.
 
@@ -42,11 +42,11 @@ $csvCollection->getHeaders(): array;
 
 $csvCollection->hasHeader('headerName'): bool;
  
-$csvCollection->combine(string $indexKey, ...$headers): array;
+$csvCollection->combine('id', 'name', 'id', ...): array;
     
-$csvCollection->groupBy('id')
+$csvCollection->groupBy('id'): array;
 
-$csvCollection->extract('id')
+$csvCollection->extract('id', true): array // Last param remove duplicated registers
 
 $csvCollection->isEmpty(): bool;
 
