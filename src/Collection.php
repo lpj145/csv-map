@@ -81,11 +81,12 @@ final class Collection implements CsvCollectionInterface
 
         $arrayIndexedByHeadersParams = array_flip($headers);
         return array_reduce($this->items, function($items, $item) use($indexKey, $headers, $arrayIndexedByHeadersParams){
+            $indexBasedOnValue = trim($item[$indexKey]);
             if (!array_key_exists($item[$indexKey], $items)) {
-                $items[$item[$indexKey]] = [];
+                $items[$indexBasedOnValue] = [];
             }
 
-            array_push($items[$item[$indexKey]], array_intersect_key($item, $arrayIndexedByHeadersParams));
+            $items[$indexBasedOnValue][] = array_intersect_key($item, $arrayIndexedByHeadersParams);
             return $items;
         }, []);
     }
